@@ -23,7 +23,11 @@ class InventoryApp(QMainWindow):
         self.products_tab = ProductTab(self.products, self.update_product_list, self.add_product, self.delete_product)
         self.tab_widget.addTab(self.products_tab, "Products")
 
-        self.inventory_tab = InventoryTab(self.products, self.update_inventory_list, self.add_inventory, self.clear_quantity_input)
+        self.inventory_tab = InventoryTab(self.products, 
+                                          self.update_inventory_list, 
+                                          self.add_inventory, 
+                                          self.clear_quantity_input, 
+                                          self.delete_selected_inventory)
         self.tab_widget.addTab(self.inventory_tab, "Inventory")
 
         self.setCentralWidget(self.tab_widget)
@@ -41,7 +45,7 @@ class InventoryApp(QMainWindow):
         for item in selected_items:
             product_name = item.text()
             self.products.remove(product_name)
-            self.inventory_tab.product_dropdown.removeItem(self.inventory_tab.product_dropdown.findText(product_name))  # Fix here
+            self.inventory_tab.product_dropdown.removeItem(self.inventory_tab.product_dropdown.findText(product_name))  
         self.update_product_list()
 
     def update_product_list(self):
@@ -65,6 +69,17 @@ class InventoryApp(QMainWindow):
         self.inventory_tab.inventory_list.clear()
         for item in self.inventory:
             self.inventory_tab.inventory_list.addItem(f"Product: {item[0]} - Serial Number: {item[1]}")
+
+    def delete_selected_inventory(self):
+        selected_items = self.inventory_tab.inventory_list.selectedItems()
+        for item in selected_items:
+            inventory_item_text = item.text()
+            serial_number = inventory_item_text.split(" - Serial Number: ")[1]
+            for inv_item in self.inventory:
+                if inv_item[1] == serial_number:
+                    self.inventory.remove(inv_item)
+                    break
+        self.update_inventory_list()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
