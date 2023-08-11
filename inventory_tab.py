@@ -1,15 +1,11 @@
+from PyQt5.QtWidgets import QLineEdit, QWidget, QVBoxLayout, QLabel, QPushButton, QListWidget, QComboBox
 import uuid
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QListWidget, QFormLayout, QComboBox
 
 class InventoryTab(QWidget):
-    def __init__(self, products, update_inventory_list, add_inventory, clear_quantity_input, delete_inventory):
+    def __init__(self, parent):
         super().__init__()
 
-        self.products = products
-        self.update_inventory_list = update_inventory_list
-        self.add_inventory = add_inventory
-        self.clear_quantity_input = clear_quantity_input
-        self.delete_inventory = delete_inventory
+        self.parentApp = parent
 
         self.init_ui()
 
@@ -17,9 +13,9 @@ class InventoryTab(QWidget):
         layout = QVBoxLayout()
 
         self.product_dropdown = QComboBox()
-        self.product_dropdown.currentIndexChanged.connect(self.clear_quantity_input)
-        for product in self.products:
-            self.product_dropdown.addItem(product)
+        self.populate_product_dropdown()  # Populate the product dropdown
+        self.product_dropdown.currentIndexChanged.connect(self.clear_quantity_input)  
+        
         layout.addWidget(QLabel("Product:"))
         layout.addWidget(self.product_dropdown)
 
@@ -35,10 +31,37 @@ class InventoryTab(QWidget):
         layout.addWidget(self.inventory_list)
 
         self.delete_inventory_button = QPushButton("Delete Inventory")
-        self.delete_inventory_button.clicked.connect(self.delete_inventory) 
+        self.delete_inventory_button.clicked.connect(self.delete_selected_inventory)
         layout.addWidget(self.delete_inventory_button)
 
         self.setLayout(layout)
 
-    def generate_uuid(self):
-        return str(uuid.uuid4())
+    def populate_product_dropdown(self):
+        #self.product_dropdown.clear()
+        self.product_dropdown.addItems(self.parentApp.products)
+        print(f"populate_product_dropdown...{self.parentApp.products}")
+
+    def clear_quantity_input(self):
+        self.quantity_input.clear()
+
+    def add_inventory(self):
+        product = self.product_dropdown.currentText()
+        quantity = self.quantity_input.text()
+
+        if product and quantity:
+            for _ in range(int(quantity)):
+                serial_number = str(uuid.uuid4())
+                self.parentApp.inventory.append((product, serial_number))
+            self.update_inventory_list()
+
+    def delete_selected_inventory(self):
+        selected_items = self.inventory_list.selectedItems()
+        for item in selected_items:
+            inventory_item_text = item.text()
+            self.parentApp.inventory.remove(inventory_item_text)
+        self.update_inventory_list()
+
+    def update_inventory_list(self):
+        self.inventory_list.clear()
+        for item in self.parentApp.inventory:
+            self.inventory_list.addItem(f"Product: {item[0]} - Serial Number: {item[1]}")

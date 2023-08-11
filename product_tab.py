@@ -1,13 +1,10 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QListWidget
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QListWidget
 
 class ProductTab(QWidget):
-    def __init__(self, products, update_product_list, add_product, delete_product):
+    def __init__(self, parent):
         super().__init__()
 
-        self.products = products
-        self.update_product_list = update_product_list
-        self.add_product = add_product
-        self.delete_product = delete_product
+        self.parentApp = parent
 
         self.init_ui()
 
@@ -20,7 +17,7 @@ class ProductTab(QWidget):
         layout.addWidget(self.product_name_input)
 
         self.add_product_button = QPushButton("Add Product")
-        self.add_product_button.clicked.connect(self.add_product)
+        self.add_product_button.clicked.connect(self.add_product)  # Connect the button click to add_product method
         layout.addWidget(self.add_product_button)
 
         self.product_list = QListWidget()
@@ -31,3 +28,22 @@ class ProductTab(QWidget):
         layout.addWidget(self.delete_product_button)
 
         self.setLayout(layout)
+
+    def add_product(self):
+        product_name = self.product_name_input.text()
+        if product_name:
+            self.parentApp.products.append(product_name)
+            self.product_name_input.clear()
+            print(f"self.parentApp.products: {self.parentApp.products}")
+            #self.update_product_list()
+
+    def delete_product(self):
+        selected_items = self.product_list.selectedItems()
+        for item in selected_items:
+            product_name = item.text()
+            self.parentApp.products.remove(product_name)
+        #self.update_product_list()
+
+    # def update_product_list(self):
+    #     self.product_list.clear()
+    #     self.product_list.addItems(self.parentApp.products)
