@@ -26,6 +26,9 @@ class InventoryApp(QMainWindow):
 
         self.setCentralWidget(self.tab_widget)
 
+    def update_inventory_tab_product_dropdown(self):
+        self.inventory_tab.populate_product_dropdown()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = InventoryApp()

@@ -35,15 +35,16 @@ class ProductTab(QWidget):
             self.parentApp.products.append(product_name)
             self.product_name_input.clear()
             print(f"self.parentApp.products: {self.parentApp.products}")
-            #self.update_product_list()
+            self.update_product_list()
+            self.parentApp.update_inventory_tab_product_dropdown()
 
     def delete_product(self):
         selected_items = self.product_list.selectedItems()
         for item in selected_items:
             product_name = item.text()
             self.parentApp.products.remove(product_name)
-        #self.update_product_list()
+        self.update_product_list()
 
-    # def update_product_list(self):
-    #     self.product_list.clear()
-    #     self.product_list.addItems(self.parentApp.products)
+    def update_product_list(self):
+        self.product_list.clear()
+        self.product_list.addItems(self.parentApp.products)
