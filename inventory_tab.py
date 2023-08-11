@@ -37,7 +37,7 @@ class InventoryTab(QWidget):
         self.setLayout(layout)
 
     def populate_product_dropdown(self):
-        #self.product_dropdown.clear()
+        self.product_dropdown.clear() # fixes items being dupelicated when dropdown is clicked
         self.product_dropdown.addItems(self.parentApp.products)
         print(f"populate_product_dropdown...{self.parentApp.products}")
 
@@ -58,8 +58,13 @@ class InventoryTab(QWidget):
         selected_items = self.inventory_list.selectedItems()
         for item in selected_items:
             inventory_item_text = item.text()
-            self.parentApp.inventory.remove(inventory_item_text)
+            serial_number = inventory_item_text.split(" - Serial Number: ")[1]
+            for inv_item in self.parentApp.inventory:
+                if inv_item[1] == serial_number:
+                    self.parentApp.inventory.remove(inv_item)
+                    break
         self.update_inventory_list()
+
 
     def update_inventory_list(self):
         self.inventory_list.clear()
