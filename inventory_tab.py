@@ -37,9 +37,8 @@ class InventoryTab(QWidget):
         self.setLayout(layout)
 
     def populate_product_dropdown(self):
-        self.product_dropdown.clear() # fixes items being dupelicated when dropdown is clicked
+        self.product_dropdown.clear() # fixes items being duplicated when dropdown is clicked
         self.product_dropdown.addItems(self.parentApp.products)
-        print(f"populate_product_dropdown...{self.parentApp.products}")
 
     def clear_quantity_input(self):
         self.quantity_input.clear()
