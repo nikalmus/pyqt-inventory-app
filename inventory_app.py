@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QListWidget, QAction, QTabWidget, QFormLayout, QComboBox
+import uuid
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QListWidget, QAction, QTabWidget, QFormLayout, QComboBox, QHBoxLayout
 
 class InventoryApp(QMainWindow):
     def __init__(self):
@@ -48,15 +49,18 @@ class InventoryApp(QMainWindow):
         self.products_tab.setLayout(layout)
 
     def init_inventory_tab(self):
-        layout = QFormLayout()
+        layout = QVBoxLayout()
 
         self.product_dropdown = QComboBox()
+        self.product_dropdown.currentIndexChanged.connect(self.clear_quantity_input)
         for product in self.products:
             self.product_dropdown.addItem(product)
-        layout.addRow("Product:", self.product_dropdown)
+        layout.addWidget(QLabel("Product:"))
+        layout.addWidget(self.product_dropdown)
 
-        self.serial_number_input = QLineEdit()
-        layout.addRow("Serial Number:", self.serial_number_input)
+        self.quantity_input = QLineEdit()
+        layout.addWidget(QLabel("Quantity:"))
+        layout.addWidget(self.quantity_input)
 
         self.add_inventory_button = QPushButton("Add Inventory")
         self.add_inventory_button.clicked.connect(self.add_inventory)
@@ -66,6 +70,10 @@ class InventoryApp(QMainWindow):
         layout.addWidget(self.inventory_list)
 
         self.inventory_tab.setLayout(layout)
+
+    def generate_uuid(self):
+        generated_uuid = str(uuid.uuid4())
+        self.serial_number_input.setText(generated_uuid)
 
     def add_product(self):
         product_name = self.product_name_input.text()
@@ -85,11 +93,16 @@ class InventoryApp(QMainWindow):
 
     def add_inventory(self):
         product = self.product_dropdown.currentText()
-        serial_number = self.serial_number_input.text()
-        if product and serial_number:
-            self.inventory.append((product, serial_number))
+        quantity = self.quantity_input.text()
+
+        if product and quantity:
+            for _ in range(int(quantity)):
+                serial_number = str(uuid.uuid4())
+                self.inventory.append((product, serial_number))
             self.update_inventory_list()
-            self.serial_number_input.clear()
+
+    def clear_quantity_input(self):
+        self.quantity_input.clear()
 
     def update_product_list(self):
         self.product_list.clear()
