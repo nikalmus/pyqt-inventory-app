@@ -34,10 +34,6 @@ class ProductTab(QWidget):
         if product_name:
             self.parentApp.products.append(product_name)
             self.product_name_input.clear()
-<<<<<<< HEAD
-            print(f"self.parentApp.products: {self.parentApp.products}")
-=======
->>>>>>> two tabs
             self.update_product_list()
             self.parentApp.update_inventory_tab_product_dropdown()
 
